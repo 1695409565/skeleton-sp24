@@ -2,6 +2,9 @@ package gh2;
 
 // TODO: maybe more imports
 
+import deque.ArrayDeque61B;
+import deque.Deque61B;
+
 //Note: This file will not compile until you complete the Deque61B implementations
 public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final
@@ -9,7 +12,7 @@ public class GuitarString {
      * other topics in lecture on Friday. */
     private static final int SR = 44100;      // Sampling Rate
     private static final double DECAY = .996; // energy decay factor
-
+    private Deque61B<Double> d;
     /* Buffer for storing sound data. */
     // TODO: uncomment the following line once you're ready to start this portion
     // private Deque61B<Double> buffer;
@@ -20,6 +23,11 @@ public class GuitarString {
         //       cast the result of this division operation into an int. For
         //       better accuracy, use the Math.round() function before casting.
         //       Your should initially fill your buffer with zeros.
+        long l = Math.round(SR / frequency);
+        d = new ArrayDeque61B<>();
+        for (int i = 0; i < l; i++) {
+            d.addLast(0.0);
+        }
     }
 
 
@@ -33,6 +41,12 @@ public class GuitarString {
         //       other. This does not mean that you need to check that the numbers
         //       are different from each other. It means you should repeatedly call
         //       Math.random() - 0.5 to generate new random numbers for each array index.
+
+        for (int i = 0; i < d.size(); i++) {
+            double r = Math.random() - 0.5;
+            d.removeFirst();
+            d.addLast(r);
+        }
     }
 
     /* Advance the simulation one time step by performing one iteration of
@@ -42,12 +56,18 @@ public class GuitarString {
         // TODO: Dequeue the front sample and enqueue a new sample that is
         //       the average of the two multiplied by the DECAY factor.
         //       **Do not call StdAudio.play().**
+        Double d1 = d.removeFirst();
+        Double d2 = d.get(0);
+        double newDouble = (d1 + d2) / 2;
+        d.addLast(newDouble);
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
         // TODO: Return the correct thing.
-        return 0;
+        if (d.size() == 0){
+            return 0.0;
+        }
+        return d.get(0);
     }
 }
-    // TODO: Remove all comments that say TODO when you're done.
